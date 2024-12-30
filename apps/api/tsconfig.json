@@ -5,5 +5,11 @@
     "outDir": "./dist"
   },
   "exclude": ["node_modules", "dist"],
-  "include": ["."]
+  "include": [
+    ".",
+    "../client/app/api/auth/types.d.ts",
+    "../client/app/api/auth/route.ts",
+    "../client/app/auth",
+    "../client/app/login/page.tsx"
+  ]
 }
