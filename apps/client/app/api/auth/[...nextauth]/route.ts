@@ -10,10 +10,12 @@ export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
       name: "Credentials",
+
       credentials: {
         email: { label: "Email", type: "text" },
         password: { label: "Password", type: "password" },
       },
+
       async authorize(credentials) {
         console.log("Authorize called with credentials:", credentials);
 
@@ -37,24 +39,28 @@ export const authOptions: NextAuthOptions = {
         }
 
         console.log("Authentication successful for user:", user.email);
-        return { id: user.id, email: user.email, name: user.name };
+
+        return { id: user.id, email: user.email, name: "test" };
       },
     }),
   ],
+
+  secret: process.env.NEXTAUTH_SECRET || "fallback_secret",
   adapter: PrismaAdapter(prisma),
-  secret: process.env.NEXTAUTH_SECRET,
+
   session: {
     strategy: "jwt",
   },
+
   callbacks: {
     async jwt({ token, user }) {
       console.log("JWT callback called. Token:", token, "User:", user);
 
       if (user) {
-        token.id = user.id;
         token.name = user.name;
+        token.id = user.id;
+        token.email = user.email;
       }
-
       console.log("Updated JWT token:", token);
       return token;
     },
@@ -65,14 +71,13 @@ export const authOptions: NextAuthOptions = {
         "Token:",
         token
       );
-
       if (token) {
         session.user = {
           id: token.id as string,
-          name: token.name as string | null,
+          name: token.name as string,
+          email: token.email as string,
         };
       }
-
       console.log("Updated session:", session);
       return session;
     },
@@ -80,4 +85,5 @@ export const authOptions: NextAuthOptions = {
 };
 
 export const handler = NextAuth(authOptions);
+
 export { handler as GET, handler as POST };

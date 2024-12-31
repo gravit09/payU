@@ -29,7 +29,7 @@ export default function UserAuth() {
 
         window.location.href = "/dashboard";
       } else {
-        const res = await fetch("/auth/signup", {
+        const res = await fetch("/login/signup", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email, password }),
@@ -40,7 +40,6 @@ export default function UserAuth() {
           throw new Error(message || "Failed to create an account");
         }
 
-        // Automatically log in the user after signup
         const loginRes = await signIn("credentials", {
           redirect: false,
           email,
