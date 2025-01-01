@@ -59,15 +59,15 @@ export default function Home() {
     <div>
       <Navbar />
       {/* Hero Section */}
-      <section className="relative min-h-[90vh] flex items-center justify-center py-20 px-4 sm:px-6 lg:px-8">
+      <section className="relative  min-h-[90vh] flex items-center justify-center py-20 px-4 sm:px-6 lg:px-8">
         {/* Background Effects */}
         <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(0,0,0,0.05),transparent_50%)]" />
+          <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&q=80')] bg-cover opacity-5 -z-20" />
           <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-3xl" />
           <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-3xl" />
         </div>
 
-        <div className="relative max-w-7xl mx-auto">
+        <div className="relative max-w-7xl mx-auto ">
           {/* Stats Banner */}
           <div className="flex flex-wrap justify-center gap-4 mb-12">
             <StatBadge
@@ -88,7 +88,7 @@ export default function Home() {
           </div>
 
           {/* Main Content */}
-          <div className="text-center max-w-4xl mx-auto">
+          <div className="text-center max-w-4xl mx-auto ">
             <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight mb-8 leading-[1.1]">
               Revolutionizing <GradientText>Digital Payments</GradientText> for
               Everyone
@@ -134,7 +134,7 @@ export default function Home() {
         </div>
       </section>
       {/* Features Section */}
-      <section className="py-24 bg-muted/100">
+      <section className="py-24 bg-muted/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl font-bold text-primary mb-4">
