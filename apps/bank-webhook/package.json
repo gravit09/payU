@@ -1,5 +1,5 @@
 {
-  "name": "api",
+  "name": "bank-webhook",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
@@ -8,5 +8,8 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": ""
+  "description": "",
+  "dependencies": {
+    "@repo/db": "*"
+  }
 }

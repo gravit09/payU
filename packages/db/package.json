@@ -1,14 +1,8 @@
 {
-  "name": "db",
+  "name": "@your-org/db",
   "version": "1.0.0",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
+  "main": "src/index.js",
+  "types": "src/index.d.ts",
   "dependencies": {
     "@prisma/client": "^6.1.0"
   }

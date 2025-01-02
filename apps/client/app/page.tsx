@@ -62,7 +62,7 @@ export default function Home() {
       <section className="relative  min-h-[90vh] flex items-center justify-center py-20 px-4 sm:px-6 lg:px-8">
         {/* Background Effects */}
         <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?auto=format&fit=crop&q=80')] bg-cover opacity-5 -z-20" />
+          <div className="absolute inset-0 bg-[url('https://cdn2.hubspot.net/hub/4650993/avast-blog/282E464A-CD1B-4970-8A93-A42FC70A8E7D.jpeg#keepProtocol')] bg-cover opacity-15 -z-20" />
           <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-3xl" />
           <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-3xl" />
         </div>
