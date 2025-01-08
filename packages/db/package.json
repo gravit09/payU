@@ -1,5 +1,5 @@
 {
-  "name": "@your-org/db",
+  "name": "@repo/db",
   "version": "1.0.0",
   "main": "src/index.js",
   "types": "src/index.d.ts",

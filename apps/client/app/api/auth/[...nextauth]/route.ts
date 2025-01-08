@@ -17,8 +17,6 @@ export const authOptions: NextAuthOptions = {
       },
 
       async authorize(credentials) {
-        console.log("Authorize called with credentials:", credentials);
-
         if (!credentials?.email || !credentials.password) {
           console.error("Missing email or password");
           throw new Error("Email and password are required");
@@ -27,8 +25,6 @@ export const authOptions: NextAuthOptions = {
         const user = await prisma.user.findUnique({
           where: { email: credentials.email },
         });
-
-        console.log("User fetched from database:", user);
 
         if (
           !user ||

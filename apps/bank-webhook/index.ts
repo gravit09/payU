@@ -1,19 +1,24 @@
 import express from "express";
-import prisma from "@repo/db";
+import { PrismaClient } from "@prisma/client";
+import { decode } from "next-auth/jwt";
 const app = express();
+const prisma = new PrismaClient();
 
 app.use(express.json());
-
 app.post("/bobWebhook", async (req, res) => {
   const paymentInformation: {
     token: string;
     userId: string;
-    amount: string;
   } = {
     token: req.body.token,
     userId: req.body.user_identifier,
-    amount: req.body.amount,
   };
+
+  const secret = process.env.NEXTAUTH_SECRET || "fallback_secret";
+  const decodedToken = await decode({
+    token: paymentInformation.token,
+    secret,
+  });
 
   try {
     await prisma.$transaction([
@@ -24,7 +29,7 @@ app.post("/bobWebhook", async (req, res) => {
         data: {
           amount: {
             //using increment beacause of the concurrent requests
-            increment: Number(paymentInformation.amount),
+            increment: Number(),
           },
         },
       }),

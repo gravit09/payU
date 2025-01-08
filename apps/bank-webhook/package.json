@@ -10,6 +10,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "@repo/db": "*"
+    "@repo/db": "*",
+    "jsonwebtoken": "^9.0.2"
   }
 }
