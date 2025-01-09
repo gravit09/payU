@@ -1,10 +1,8 @@
 import NextAuth, { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import { PrismaClient } from "@prisma/client";
+import db from "@repo/db/client";
 import bcrypt from "bcrypt";
-
-const prisma = new PrismaClient();
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -22,7 +20,7 @@ export const authOptions: NextAuthOptions = {
           throw new Error("Email and password are required");
         }
 
-        const user = await prisma.user.findUnique({
+        const user = await db.user.findUnique({
           where: { email: credentials.email },
         });
 
@@ -42,7 +40,7 @@ export const authOptions: NextAuthOptions = {
   ],
 
   secret: process.env.NEXTAUTH_SECRET || "fallback_secret",
-  adapter: PrismaAdapter(prisma),
+  adapter: PrismaAdapter(db),
 
   session: {
     strategy: "jwt",
