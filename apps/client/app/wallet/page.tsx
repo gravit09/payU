@@ -3,16 +3,7 @@
 import { useState } from "react";
 import { Card } from "@repo/ui/card";
 import { Input } from "@repo/ui/input";
-import { Button } from "@repo/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@repo/ui/select";
-import { Wallet, ArrowUpCircle, Clock, Building2 } from "lucide-react";
-import { ScrollArea } from "@repo/ui/scroll-area";
+import { Wallet, ArrowUpCircle, Clock } from "lucide-react";
 
 const banks = [
   { id: 1, name: "Chase Bank" },
