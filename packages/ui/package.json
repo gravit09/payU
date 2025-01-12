@@ -12,7 +12,10 @@
     "./card": "./src/card.tsx",
     "./PricingSection": "./src/pricing.tsx",
     "./gradient-text": "./src/gradientText.tsx",
-    "./stat-badge": "./src/statBadge.tsx"
+    "./stat-badge": "./src/statBadge.tsx",
+    "./input": "./src/input.tsx",
+    "./select": "./src/select.tsx",
+    "./scroll-area": "./src/scroll-area.tsx"
   },
   "scripts": {
     "lint": "eslint . --max-warnings 0",

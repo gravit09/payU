@@ -1,8 +1,7 @@
 import express from "express";
-import { PrismaClient } from "@prisma/client";
+import db from "@repo/db/client";
 import { decode } from "next-auth/jwt";
 const app = express();
-const prisma = new PrismaClient();
 
 app.use(express.json());
 app.post("/bobWebhook", async (req, res) => {
@@ -21,8 +20,8 @@ app.post("/bobWebhook", async (req, res) => {
   });
 
   try {
-    await prisma.$transaction([
-      prisma.balance.updateMany({
+    await db.$transaction([
+      db.balance.updateMany({
         where: {
           userId: paymentInformation.userId,
         },
@@ -33,7 +32,7 @@ app.post("/bobWebhook", async (req, res) => {
           },
         },
       }),
-      prisma.onRampTransaction.updateMany({
+      db.onRampTransaction.updateMany({
         where: {
           token: paymentInformation.token,
         },
