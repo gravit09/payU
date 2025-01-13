@@ -16,7 +16,7 @@ export default function UserAuth() {
   useEffect(() => {
     async function checkSession() {
       const session = await getSession();
-      if (session) {
+      if (session?.user.app !== "bank") {
         router.push("/dashboard");
       }
     }

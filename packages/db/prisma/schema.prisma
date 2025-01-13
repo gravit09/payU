@@ -26,6 +26,7 @@ model BankUser {
   id        String    @id @default(uuid())
   name      String?
   email     String    @unique
+  password  String
   accountNumber  Int       @unique @default(autoincrement())
   balance        Int         @default(2000)
   transactions   Transaction[]

@@ -10,7 +10,7 @@ export async function POST(req: Request) {
     });
   }
 
-  const existingUser = await db.user.findUnique({
+  const existingUser = await db.bankUser.findUnique({
     where: { email },
   });
 
@@ -23,7 +23,7 @@ export async function POST(req: Request) {
   const hashedPassword = await bcrypt.hash(password, 10);
 
   try {
-    const user = await db.user.create({
+    const user = await db.bankUser.create({
       data: { email, password: hashedPassword },
     });
     return new Response(JSON.stringify(user), {

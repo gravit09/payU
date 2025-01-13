@@ -20,7 +20,7 @@ export const authOptions: NextAuthOptions = {
           throw new Error("Email and password are required");
         }
 
-        const user = await db.user.findUnique({
+        const user = await db.bankUser.findUnique({
           where: { email: credentials.email },
         });
 
@@ -52,6 +52,7 @@ export const authOptions: NextAuthOptions = {
         token.name = user.name;
         token.id = user.id;
         token.email = user.email;
+        token.app = "bank";
       }
       return token;
     },
@@ -67,6 +68,7 @@ export const authOptions: NextAuthOptions = {
           id: token.id as string,
           name: token.name as string,
           email: token.email as string,
+          app: "bank",
         };
       }
       console.log("Updated session:", session);
