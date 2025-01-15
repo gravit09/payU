@@ -6,55 +6,61 @@ import { useRouter } from "next/navigation";
 import { Card } from "@repo/ui/card";
 import { Input } from "@repo/ui/input";
 import { Wallet, ArrowUpCircle, Clock } from "lucide-react";
+import {
+  topUpWallet,
+  getBalance,
+  getTranscations,
+} from "../actions/transcation";
 
 const banks = [
   { id: 1, name: "Chase Bank" },
   { id: 2, name: "Bank of America" },
 ];
 
-const mockTransactions = [
-  {
-    id: 1,
-    type: "deposit",
-    amount: 500,
-    date: "2024-03-20",
-    bank: "Chase Bank",
-  },
-];
+type Transaction = {
+  id: string;
+  status: string;
+  token: string;
+  provider: string;
+  amount: number;
+  startTime: Date;
+  userId: string;
+};
 
 export default function TransactionsPage() {
-  const [balance, setBalance] = useState(1750);
+  const [balance, setBalance] = useState(0);
   const [amount, setAmount] = useState("");
   const [selectedBank, setSelectedBank] = useState("");
-  const [transactions, setTransactions] = useState(mockTransactions);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
   const { data: session, status } = useSession();
   const router = useRouter();
 
-  // Redirect if the user is not authenticated
   useEffect(() => {
+    // Redirect unauthenticated users to login
     if (status === "unauthenticated") {
       router.push("/login");
+      return;
+    }
+
+    if (status === "authenticated") {
+      const fetchBalance = async () => {
+        try {
+          const balance = await getBalance();
+          const fetchedTransactions = await getTranscations();
+          setBalance(balance);
+          setTransactions(fetchedTransactions);
+        } catch (error) {
+          console.error("Error fetching data:", error);
+        }
+      };
+
+      fetchBalance();
     }
   }, [status, router]);
 
-  // Show a loading state while session is being fetched
   if (status === "loading") {
     return <p>Loading...</p>;
   }
-
-  // Extract user ID from the session
-  const userId = session?.user?.id;
-
-  const handleTopUp = async () => {
-    const response = await fetch("/api/topup", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ amount, userId }),
-    });
-
-    const data = await response.json();
-    window.location.href = data.url;
-  };
 
   return (
     <div className="container mx-auto py-8 px-4 max-w-6xl">
@@ -103,7 +109,18 @@ export default function TransactionsPage() {
 
             <button
               className="w-full p-2 bg-primary text-white rounded"
-              onClick={handleTopUp}
+              onClick={async () => {
+                try {
+                  await topUpWallet(Number(amount), selectedBank);
+                  /* Refetch balance and transactions after top-up more advanced approach is using service like graphql and pusher */
+                  const newTransactions = await getTranscations();
+                  setTransactions(newTransactions);
+                  setAmount("");
+                  setSelectedBank("");
+                } catch (error) {
+                  console.error("Error topping up wallet:", error);
+                }
+              }}
               disabled={!amount || !selectedBank}
             >
               <ArrowUpCircle className="w-4 h-4 mr-2 inline" />
@@ -121,23 +138,33 @@ export default function TransactionsPage() {
 
           <div className="h-[400px] overflow-y-auto">
             <div className="space-y-4 pr-4">
-              {transactions.map((transaction) => (
-                <Card key={transaction.id} className="p-4">
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <p className="font-medium">
-                        Added money from {transaction.bank}
-                      </p>
-                      <p className="text-sm text-muted-foreground">
-                        {transaction.date}
+              {transactions.length > 0 ? (
+                transactions.map((transaction) => (
+                  <Card key={transaction.id} className="p-4">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <p className="font-medium">
+                          Added money from {transaction.provider}
+                        </p>
+                        <p className="text-sm text-muted-foreground">
+                          {new Date(transaction.startTime).toLocaleDateString()}
+                        </p>
+                        <p className="font-medium">
+                          Status:
+                          <span className="text-yellow-400">
+                            {transaction.status}
+                          </span>
+                        </p>
+                      </div>
+                      <p className="font-semibold text-green-600">
+                        +₹{transaction.amount.toFixed(2)}
                       </p>
                     </div>
-                    <p className="font-semibold text-green-600">
-                      +₹{transaction.amount.toFixed(2)}
-                    </p>
-                  </div>
-                </Card>
-              ))}
+                  </Card>
+                ))
+              ) : (
+                <p className="text-muted-foreground">No transactions yet.</p>
+              )}
             </div>
           </div>
         </Card>

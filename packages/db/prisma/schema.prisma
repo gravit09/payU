@@ -19,7 +19,7 @@ model User {
   name              String?
   password          String
   OnRampTransaction OnRampTransaction[]
-  Balance           Balance[]
+  Balance           Int @default(0)
 }
 
 model BankUser {
@@ -52,21 +52,13 @@ enum TransactionType {
 //transcations model for onramp transactions to wallet
 model OnRampTransaction {
   id        String         @id @default(uuid())
-  status    OnRampStatus
+  status    OnRampStatus   
   token     String       @unique
   provider  String
   amount    Int
   startTime DateTime
   userId    String
   user      User         @relation(fields: [userId], references: [id])
-}
-
-model Balance {
-  id     Int  @id @default(autoincrement())
-  userId String  @unique
-  amount Int
-  locked Int
-  user   User @relation(fields: [userId], references: [id])
 }
 
 enum OnRampStatus {

@@ -55,12 +55,6 @@ export const authOptions: NextAuthOptions = {
       return token;
     },
     async session({ session, token }) {
-      console.log(
-        "Session callback called. Session:",
-        session,
-        "Token:",
-        token
-      );
       if (token) {
         session.user = {
           id: token.id as string,
@@ -68,7 +62,6 @@ export const authOptions: NextAuthOptions = {
           email: token.email as string,
         };
       }
-      console.log("Updated session:", session);
       return session;
     },
   },
