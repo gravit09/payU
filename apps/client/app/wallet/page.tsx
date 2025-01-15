@@ -1,6 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 import { Card } from "@repo/ui/card";
 import { Input } from "@repo/ui/input";
 import { Wallet, ArrowUpCircle, Clock } from "lucide-react";
@@ -8,8 +10,6 @@ import { Wallet, ArrowUpCircle, Clock } from "lucide-react";
 const banks = [
   { id: 1, name: "Chase Bank" },
   { id: 2, name: "Bank of America" },
-  { id: 3, name: "Wells Fargo" },
-  { id: 4, name: "Citibank" },
 ];
 
 const mockTransactions = [
@@ -20,20 +20,6 @@ const mockTransactions = [
     date: "2024-03-20",
     bank: "Chase Bank",
   },
-  {
-    id: 2,
-    type: "deposit",
-    amount: 1000,
-    date: "2024-03-19",
-    bank: "Bank of America",
-  },
-  {
-    id: 3,
-    type: "deposit",
-    amount: 250,
-    date: "2024-03-18",
-    bank: "Wells Fargo",
-  },
 ];
 
 export default function TransactionsPage() {
@@ -41,28 +27,39 @@ export default function TransactionsPage() {
   const [amount, setAmount] = useState("");
   const [selectedBank, setSelectedBank] = useState("");
   const [transactions, setTransactions] = useState(mockTransactions);
+  const { data: session, status } = useSession();
+  const router = useRouter();
 
-  const handleDeposit = () => {
-    if (!amount || !selectedBank) return;
+  // Redirect if the user is not authenticated
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.push("/login");
+    }
+  }, [status, router]);
 
-    const newTransaction = {
-      id: transactions.length + 1,
-      type: "deposit",
-      amount: parseFloat(amount),
-      date: new Date().toISOString().split("T")[0] ?? "",
-      bank: selectedBank,
-    };
+  // Show a loading state while session is being fetched
+  if (status === "loading") {
+    return <p>Loading...</p>;
+  }
 
-    setTransactions([newTransaction, ...transactions]);
-    setBalance((prev) => prev + parseFloat(amount));
-    setAmount("");
-    setSelectedBank("");
+  // Extract user ID from the session
+  const userId = session?.user?.id;
+
+  const handleTopUp = async () => {
+    const response = await fetch("/api/topup", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ amount, userId }),
+    });
+
+    const data = await response.json();
+    window.location.href = data.url;
   };
 
   return (
     <div className="container mx-auto py-8 px-4 max-w-6xl">
       <div className="grid gap-8 md:grid-cols-2">
-        {/* Wallet Section */}
+        {/* Wallet Card */}
         <Card className="p-6 space-y-6">
           <div className="flex items-center gap-2 mb-6">
             <Wallet className="w-6 h-6 text-primary" />
@@ -71,28 +68,26 @@ export default function TransactionsPage() {
 
           <div className="bg-primary/10 p-4 rounded-lg">
             <p className="text-sm text-muted-foreground">Current Balance</p>
-            <p className="text-3xl font-bold">${balance.toFixed(2)}</p>
+            <p className="text-3xl font-bold">₹{balance.toFixed(2)}</p>
           </div>
 
           <div className="space-y-4">
             <div>
-              <div>
-                <label className="text-sm font-medium mb-2 block">
-                  Select Bank
-                </label>
-                <select
-                  className="w-full p-2 border rounded"
-                  value={selectedBank}
-                  onChange={(e) => setSelectedBank(e.target.value)}
-                >
-                  <option value="">Select a bank</option>
-                  {banks.map((bank) => (
-                    <option key={bank.id} value={bank.name}>
-                      {bank.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
+              <label className="text-sm font-medium mb-2 block">
+                Select Bank
+              </label>
+              <select
+                className="w-full p-2 border rounded"
+                value={selectedBank}
+                onChange={(e) => setSelectedBank(e.target.value)}
+              >
+                <option value="">Select a bank</option>
+                {banks.map((bank) => (
+                  <option key={bank.id} value={bank.name}>
+                    {bank.name}
+                  </option>
+                ))}
+              </select>
             </div>
 
             <div>
@@ -105,9 +100,10 @@ export default function TransactionsPage() {
                 min="0"
               />
             </div>
+
             <button
               className="w-full p-2 bg-primary text-white rounded"
-              onClick={handleDeposit}
+              onClick={handleTopUp}
               disabled={!amount || !selectedBank}
             >
               <ArrowUpCircle className="w-4 h-4 mr-2 inline" />
@@ -137,7 +133,7 @@ export default function TransactionsPage() {
                       </p>
                     </div>
                     <p className="font-semibold text-green-600">
-                      +${transaction.amount.toFixed(2)}
+                      +₹{transaction.amount.toFixed(2)}
                     </p>
                   </div>
                 </Card>
