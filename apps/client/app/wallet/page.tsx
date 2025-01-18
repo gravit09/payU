@@ -111,8 +111,11 @@ export default function TransactionsPage() {
               className="w-full p-2 bg-primary text-white rounded"
               onClick={async () => {
                 try {
-                  await topUpWallet(Number(amount), selectedBank);
-                  /* Refetch balance and transactions after top-up more advanced approach is using service like graphql and pusher */
+                  const { bankUrl } = await topUpWallet(
+                    Number(amount),
+                    selectedBank
+                  );
+                  window.open(bankUrl, "_blank");
                   const newTransactions = await getTranscations();
                   setTransactions(newTransactions);
                   setAmount("");

@@ -1,7 +1,17 @@
 "use server";
 import db from "@repo/db/client";
 import { getServerSession } from "next-auth";
+import crypto from "crypto";
+import { v4 as uuidv4 } from "uuid";
 import { authOptions } from "../api/auth/[...nextauth]/route";
+
+interface Payload {
+  txnId: string;
+  amount: number;
+  timestamp: number;
+}
+
+const SECRET_KEY = "testKey";
 
 export async function getBalance() {
   const session = await getServerSession(authOptions);
@@ -34,8 +44,6 @@ export async function topUpWallet(amount: number, provider: string) {
   }
 
   const userId = session.user?.id;
-  console.log("User ID:", userId);
-
   if (!userId) {
     throw new Error("Unauthenticated request");
   }
@@ -61,5 +69,31 @@ export async function topUpWallet(amount: number, provider: string) {
     },
   });
 
-  return transaction;
+  const txnId = uuidv4();
+  const { payload, signature } = generateSignedPayload(txnId, amount);
+  const bankUrl = `http://localhost:3000/payment?payload=${encodeURIComponent(
+    payload
+  )}&signature=${signature}`;
+
+  return { transaction, bankUrl };
 }
+
+const generateSignedPayload = (
+  txnId: string,
+  amount: number
+): { payload: string; signature: string } => {
+  const payload: Payload = {
+    txnId,
+    amount,
+    timestamp: Date.now(),
+  };
+
+  const payloadString = JSON.stringify(payload);
+
+  const signature = crypto
+    .createHmac("sha256", SECRET_KEY)
+    .update(payloadString)
+    .digest("hex");
+
+  return { payload: payloadString, signature };
+};
