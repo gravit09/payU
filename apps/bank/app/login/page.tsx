@@ -17,7 +17,7 @@ export default function UserAuth() {
     async function checkSession() {
       const session = await getSession();
       if (session?.user.app !== "bank") {
-        router.push("/dashboard");
+        router.push("/login");
       }
     }
     checkSession();
@@ -30,7 +30,7 @@ export default function UserAuth() {
 
     try {
       if (isLogin) {
-        const res = await signIn("credentials", {
+        const res = await signIn("credentials1", {
           redirect: false,
           email,
           password,

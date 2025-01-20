@@ -60,13 +60,20 @@ export default function Payment() {
         )}
 
         {isValid === true && amount !== null && (
-          <div className="text-center text-green-600">
+          <div className="text-center flex text-green-600">
             <p className="text-lg">
-              Payment request of <strong>{amount}</strong> USD is valid.
+              Payment request of <strong>{amount}</strong> Rupees is valid.
             </p>
           </div>
         )}
-
+        <div className="m-auto flex text-center ">
+          <button className="ml-5 p-2 rounded bg-green-400 text-white">
+            Accept
+          </button>
+          <button className="ml-5 p-2 rounded bg-red-400 text-white">
+            Reject
+          </button>
+        </div>
         {isValid === true && amount === null && (
           <p className="text-center text-gray-600">Amount not found.</p>
         )}
