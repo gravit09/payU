@@ -1,8 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { signIn } from "next-auth/react";
-import { getSession } from "next-auth/react";
+import { signIn, getSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 
 export default function UserAuth() {
@@ -14,10 +13,12 @@ export default function UserAuth() {
   const [error, setError] = useState("");
 
   useEffect(() => {
+    // Check if the session exists and is for the "bank" app
     async function checkSession() {
       const session = await getSession();
-      if (session?.user.app !== "bank") {
-        router.push("/login");
+      console.log(session);
+      if (session?.user.app === "bank") {
+        router.push("/dashboard");
       }
     }
     checkSession();
@@ -30,19 +31,23 @@ export default function UserAuth() {
 
     try {
       if (isLogin) {
-        const res = await signIn("credentials1", {
-          redirect: false,
+        // Login logic
+        const res = await signIn("credentials", {
+          redirect: false, // Prevent automatic redirects
           email,
           password,
         });
+        console.log("SignIn Response:", res);
 
         if (res?.error) {
           throw new Error(res.error);
         }
 
+        // Redirect to the dashboard on successful login
         window.location.href = "/dashboard";
       } else {
-        const res = await fetch("/login/signup", {
+        // Signup logic
+        const res = await fetch("/api/auth/signup", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email, password }),
@@ -53,6 +58,7 @@ export default function UserAuth() {
           throw new Error(message || "Failed to create an account");
         }
 
+        // Auto-login after signup
         const loginRes = await signIn("credentials", {
           redirect: false,
           email,
@@ -63,6 +69,7 @@ export default function UserAuth() {
           throw new Error(loginRes.error);
         }
 
+        console.log("Signup and Auto-login Response:", loginRes);
         window.location.href = "/dashboard";
       }
     } catch (err: any) {

@@ -41,7 +41,7 @@ export default function TransactionsPage() {
       router.push("/login");
       return;
     }
-
+    console.log(session);
     if (status === "authenticated") {
       const fetchBalance = async () => {
         try {

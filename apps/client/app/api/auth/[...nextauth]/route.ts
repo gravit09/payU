@@ -7,15 +7,13 @@ import bcrypt from "bcrypt";
 export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
-      name: "Credentials",
+      name: "PayU Credentials",
       credentials: {
         email: { label: "Email", type: "text" },
         password: { label: "Password", type: "password" },
       },
-
       async authorize(credentials) {
         if (!credentials?.email || !credentials.password) {
-          console.error("Missing email or password");
           throw new Error("Email and password are required");
         }
 
@@ -27,30 +25,36 @@ export const authOptions: NextAuthOptions = {
           !user ||
           !(await bcrypt.compare(credentials.password, user.password))
         ) {
-          console.error("Invalid email or password");
           throw new Error("Invalid email or password");
         }
 
-        console.log("Authentication successful for user:", user.email);
-
-        return { id: user.id, email: user.email, name: "test" };
+        return { id: user.id, email: user.email, name: "PayU User" };
       },
     }),
   ],
-
-  secret: process.env.NEXTAUTH_SECRET || "fallback_secret",
+  secret: process.env.NEXTAUTH_SECRET || "payu_secret",
   adapter: PrismaAdapter(db),
-
   session: {
     strategy: "jwt",
   },
-
+  cookies: {
+    sessionToken: {
+      name: "next-auth.session-token-payu",
+      options: {
+        httpOnly: true,
+        sameSite: "lax",
+        path: "/",
+        secure: process.env.NODE_ENV === "production",
+      },
+    },
+  },
   callbacks: {
     async jwt({ token, user }) {
       if (user) {
         token.name = user.name;
         token.id = user.id;
         token.email = user.email;
+        token.app = "payu";
       }
       return token;
     },
@@ -58,8 +62,9 @@ export const authOptions: NextAuthOptions = {
       if (token) {
         session.user = {
           id: token.id as string,
-          name: token.name as string,
-          email: token.email as string,
+          name: token.name,
+          email: token.email,
+          app: token.app as string,
         };
       }
       return session;
