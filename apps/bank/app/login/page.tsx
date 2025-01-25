@@ -47,7 +47,7 @@ export default function UserAuth() {
         window.location.href = "/dashboard";
       } else {
         // Signup logic
-        const res = await fetch("/api/auth/signup", {
+        const res = await fetch("login/signup", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ email, password }),

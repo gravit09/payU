@@ -1,4 +1,8 @@
+"use server";
 import { NextResponse } from "next/server";
+import db from "@repo/db/client";
+import { getServerSession } from "next-auth";
+import { authOptions } from "../auth/[...nextauth]/route";
 import crypto from "crypto";
 
 const SECRET_KEY = "testKey";
@@ -56,4 +60,62 @@ export async function POST(req: Request) {
   }
 
   return NextResponse.json({ success: true, amount: verifiedPayload.amount });
+}
+
+export async function acceptPayment(amount: number) {
+  const session = await getServerSession(authOptions);
+  const id = session?.user.id;
+
+  if (!id) {
+    throw new Error("User not authenticated");
+  }
+  const user = await db.bankUser.findUnique({
+    where: { id },
+  });
+
+  if (!user) {
+    throw new Error("User not found");
+  }
+
+  if (user.balance < amount) {
+    throw new Error("Insufficient balance");
+  }
+
+  const result = await db.$transaction([
+    db.bankUser.update({
+      where: { id },
+      data: {
+        balance: {
+          decrement: amount,
+        },
+      },
+    }),
+    db.transaction.create({
+      data: {
+        type: "WITHDRAWAL",
+        amount: amount,
+        accountId: id,
+      },
+    }),
+  ]);
+
+  if (result) {
+    return {
+      success: true,
+      message: "Payment accepted and transaction completed successfully.",
+      data: {
+        amount,
+        accountId: id,
+      },
+    };
+  } else {
+    return {
+      success: false,
+      message: "Payment Failed",
+      data: {
+        amount,
+        accountId: id,
+      },
+    };
+  }
 }

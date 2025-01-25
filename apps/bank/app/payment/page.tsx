@@ -1,11 +1,23 @@
 "use client";
 import { useEffect, useState } from "react";
+import { getSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { acceptPayment } from "../api/actions/route";
 
 export default function Payment() {
+  const router = useRouter();
   const [isValid, setIsValid] = useState<boolean | null>(null);
   const [amount, setAmount] = useState<number | null>(null);
 
   useEffect(() => {
+    async function checkSession() {
+      const session = await getSession();
+      console.log(session);
+      if (session?.user.app !== "bank") {
+        router.push("/login");
+      }
+    }
+    checkSession();
     const verifyPayment = async () => {
       const urlParams = new URLSearchParams(window.location.search);
       const payload = urlParams.get("payload");
@@ -67,7 +79,10 @@ export default function Payment() {
           </div>
         )}
         <div className="m-auto flex text-center ">
-          <button className="ml-5 p-2 rounded bg-green-400 text-white">
+          <button
+            onClick={() => acceptPayment(Number(amount))}
+            className="ml-5 p-2 rounded bg-green-400 text-white"
+          >
             Accept
           </button>
           <button className="ml-5 p-2 rounded bg-red-400 text-white">
