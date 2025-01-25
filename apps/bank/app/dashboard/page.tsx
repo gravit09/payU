@@ -2,20 +2,25 @@ import db from "@repo/db/client";
 import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../api/auth/[...nextauth]/route";
+import { addMoney } from "../api/actions/route";
+import InteractiveSection from "../(component)/page";
 
 export default async function Dashboard() {
+  const yojanas: string[] = [
+    "2000 rupees received for ladle bhen yojana",
+    "Ye 2000 rupees sidha apke bank khate mai ,kya karega itne dhan rashi ka",
+    "2000 rupees received from ladla bhai yojana, Why the girls have all the fun",
+  ];
+
   const session = await getServerSession(authOptions);
 
   if (!session || session.user.app !== "bank") {
     redirect("/login");
   }
 
-  console.log("Session:", session);
-
   const userId = session.user.id;
 
   try {
-    // Fetch user details including transactions
     const user = await db.bankUser.findUnique({
       where: { id: userId },
       include: { transactions: true },
@@ -25,7 +30,6 @@ export default async function Dashboard() {
       return <p>User not found.</p>;
     }
 
-    // Format balance to INR currency
     const formattedBalance = new Intl.NumberFormat("en-IN", {
       style: "currency",
       currency: "INR",
@@ -49,6 +53,9 @@ export default async function Dashboard() {
               {formattedBalance}
             </p>
           </div>
+
+          {/* Interactive Section */}
+          <InteractiveSection yojanas={yojanas} addMoney={addMoney} />
 
           {/* Transaction History */}
           <div className="bg-white dark:bg-gray-800 shadow-md rounded-lg p-6 mb-6">

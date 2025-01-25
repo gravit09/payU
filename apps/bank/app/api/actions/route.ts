@@ -36,6 +36,26 @@ export const verifySignedPayload = async (
   }
 };
 
+export const addMoney = async () => {
+  const session = await getServerSession(authOptions);
+  if (!session || !session.user) {
+    console.error("User not authenticated");
+    return NextResponse.json(
+      { success: false, message: "User not authenticated" },
+      { status: 401 }
+    );
+  }
+  const userId = session.user.id;
+  await db.bankUser.update({
+    where: { id: userId },
+    data: {
+      balance: {
+        increment: 200000,
+      },
+    },
+  });
+};
+
 async function acceptPayment(userId: string, amount: number) {
   const user = await db.bankUser.findUnique({
     where: { id: userId },
@@ -67,7 +87,7 @@ async function acceptPayment(userId: string, amount: number) {
       },
     }),
   ]);
-
+  console.log(transaction);
   return transaction[1];
 }
 
