@@ -71,34 +71,6 @@ export default async function Dashboard() {
               )}
             </ul>
           </div>
-
-          {/* Make a Transaction */}
-          <div className="bg-white dark:bg-gray-800 shadow-md rounded-lg p-6">
-            <h2 className="text-xl font-semibold">Make a Transaction</h2>
-            <form
-              action="/api/transaction/deposit"
-              method="POST"
-              className="mt-4"
-            >
-              <input type="hidden" name="userId" value={user.id} />
-              <label className="block mb-2 text-gray-600 dark:text-gray-400">
-                Deposit Amount (₹)
-              </label>
-              <input
-                type="number"
-                name="amount"
-                className="w-full p-2 border rounded-md mb-4"
-                placeholder="Enter amount"
-                required
-              />
-              <button
-                type="submit"
-                className="bg-blue-600 text-white p-2 rounded-md hover:bg-blue-700"
-              >
-                Deposit
-              </button>
-            </form>
-          </div>
         </div>
       </div>
     );

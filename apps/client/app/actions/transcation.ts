@@ -11,8 +11,6 @@ interface Payload {
   timestamp: number;
 }
 
-const SECRET_KEY = "testKey";
-
 export async function getBalance() {
   const session = await getServerSession(authOptions);
   const id = session?.user.id;
@@ -69,7 +67,7 @@ export async function topUpWallet(amount: number, provider: string) {
     },
   });
 
-  const txnId = uuidv4();
+  const txnId = transaction.id;
   const { payload, signature } = generateSignedPayload(txnId, amount);
   const bankUrl = `http://localhost:3000/payment?payload=${encodeURIComponent(
     payload
@@ -91,7 +89,7 @@ const generateSignedPayload = (
   const payloadString = JSON.stringify(payload);
 
   const signature = crypto
-    .createHmac("sha256", SECRET_KEY)
+    .createHmac("sha256", process.env.SECRET_KEY || "defaultSecretKey")
     .update(payloadString)
     .digest("hex");
 
