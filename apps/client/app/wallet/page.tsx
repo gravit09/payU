@@ -13,7 +13,7 @@ import {
 } from "../actions/transcation";
 
 const banks = [
-  { id: 1, name: "Chase Bank" },
+  { id: 1, name: "HDFC BANK" },
   { id: 2, name: "Bank of America" },
 ];
 
@@ -154,7 +154,13 @@ export default function TransactionsPage() {
                         </p>
                         <p className="font-medium">
                           Status:
-                          <span className="text-yellow-400">
+                          <span
+                            className={
+                              transaction.status === "Success"
+                                ? "text-green-400"
+                                : "text-yellow-400"
+                            }
+                          >
                             {transaction.status}
                           </span>
                         </p>

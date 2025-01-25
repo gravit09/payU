@@ -15,10 +15,10 @@ interface PaymentPayload {
   timestamp: number;
 }
 
-const verifySignedPayload = (
+export const verifySignedPayload = async (
   payload: string,
   signature: string
-): PaymentPayload | null => {
+): Promise<PaymentPayload | null> => {
   const recreatedSignature = crypto
     .createHmac("sha256", SECRET_KEY)
     .update(payload)
@@ -54,7 +54,7 @@ async function acceptPayment(userId: string, amount: number) {
       where: { id: userId },
       data: {
         balance: {
-          decrement: amount,
+          decrement: amount * 100,
         },
       },
     }),
@@ -62,7 +62,7 @@ async function acceptPayment(userId: string, amount: number) {
       data: {
         id: crypto.randomUUID(),
         type: "WITHDRAWAL",
-        amount: amount,
+        amount: amount * 100,
         accountId: userId,
       },
     }),
@@ -74,7 +74,6 @@ async function acceptPayment(userId: string, amount: number) {
 export async function POST(req: Request) {
   try {
     const { payload, signature } = await req.json();
-    console.log(payload);
     if (!payload || !signature) {
       console.error("Missing payload or signature");
       return NextResponse.json(
@@ -83,7 +82,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const verifiedPayload = verifySignedPayload(payload, signature);
+    const verifiedPayload = await verifySignedPayload(payload, signature);
     if (!verifiedPayload) {
       console.error("Invalid or tampered signature");
       return NextResponse.json(

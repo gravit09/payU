@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { getSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { verifySignedPayload } from "../api/actions/route";
 
 export default function Payment() {
   const router = useRouter();
@@ -20,41 +21,26 @@ export default function Payment() {
           router.push("/login");
           return;
         }
-
         const urlParams = new URLSearchParams(window.location.search);
         const payloadParam = urlParams.get("payload");
         const signatureParam = urlParams.get("signature");
-        console.log(signatureParam);
-        console.log(payloadParam);
 
         if (!payloadParam || !signatureParam) {
           setIsValid(false);
           return;
         }
-
+        const verifiedPayload = await verifySignedPayload(
+          payloadParam,
+          signatureParam
+        );
+        if (!verifiedPayload) {
+          setIsValid(false);
+          return;
+        }
+        setIsValid(true);
         setPayload(payloadParam);
         setSignature(signatureParam);
-
-        const response = await fetch("/api/actions", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            payload: payloadParam,
-            signature: signatureParam,
-          }),
-        });
-
-        const data = await response.json();
-
-        if (response.ok && data.success) {
-          setIsValid(true);
-          setAmount(data.transaction?.amount || null);
-          setTxnId(data.transaction?.id || null);
-        } else {
-          setIsValid(false);
-        }
+        setAmount(verifiedPayload.amount);
       } catch (error) {
         console.error("Error verifying payment:", error);
         setIsValid(false);
@@ -131,7 +117,7 @@ export default function Payment() {
           <button
             onClick={() => handlePayment(true)}
             className="p-2 rounded bg-green-500 text-white"
-            disabled={!isValid || !payload || !signature}
+            disabled={!isValid}
           >
             Accept
           </button>

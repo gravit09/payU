@@ -18,7 +18,7 @@ export default function UserAuth() {
       const session = await getSession();
       console.log(session);
       if (session?.user.app === "bank") {
-        router.push("/dashboard");
+        router.push("/payment");
       }
     }
     checkSession();

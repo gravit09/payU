@@ -16,7 +16,6 @@ export async function POST(req: Request) {
     }
 
     const { txnId, amount, status } = await req.json();
-    console.log(txnId, amount, status);
     if (!txnId || typeof amount !== "number" || !status) {
       return NextResponse.json({ message: "Invalid payload" }, { status: 400 });
     }
@@ -28,7 +27,7 @@ export async function POST(req: Request) {
     if (!transaction) {
       return NextResponse.json(
         { message: "Transaction not found" },
-        { status: 409 }
+        { status: 402 }
       );
     }
 
@@ -41,7 +40,7 @@ export async function POST(req: Request) {
     }
 
     // Update the transaction status
-    await db.onRampTransaction.update({
+    const processedTxn = await db.onRampTransaction.update({
       where: { id: txnId },
       data: { status: status },
     });
@@ -49,7 +48,7 @@ export async function POST(req: Request) {
     const txnUser = await db.onRampTransaction.findFirst({
       where: { id: txnId },
       include: {
-        user: true, // for including the related user object
+        user: true, //include is used for including the related user object
       },
     });
 
@@ -60,11 +59,10 @@ export async function POST(req: Request) {
         where: { id: userId },
         data: {
           Balance: {
-            increment: amount,
+            increment: processedTxn.amount,
           },
         },
       });
-
       console.log(`User ${userId} topped up wallet with ₹${amount}`);
       return NextResponse.json(
         { message: "Wallet top-up successful!" },
