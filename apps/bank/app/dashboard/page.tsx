@@ -9,7 +9,7 @@ export default async function Dashboard() {
   const yojanas: string[] = [
     "2000 rupees received for ladle bhen yojana",
     "Ye 2000 rupees sidha apke bank khate mai ,kya karega itne dhan rashi ka",
-    "2000 rupees received from ladla bhai yojana, Why the girls have all the fun",
+    "2000 rupees received from ladla bhai yojana, Why should girls have all the fun",
   ];
 
   const session = await getServerSession(authOptions);
