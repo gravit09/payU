@@ -158,7 +158,9 @@ export default function TransactionsPage() {
                             className={
                               transaction.status === "Success"
                                 ? "text-green-400"
-                                : "text-yellow-400"
+                                : transaction.status === "Failure"
+                                  ? "text-red-400"
+                                  : "text-yellow-400"
                             }
                           >
                             {transaction.status}

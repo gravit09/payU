@@ -2,20 +2,22 @@ import db from "@repo/db/client";
 import bcrypt from "bcrypt";
 
 export async function POST(req: Request) {
-  const { email, password } = await req.json();
+  const { email, username, password } = await req.json();
 
-  if (!email || !password) {
-    return new Response("Email and password are required", {
+  if (!email || !password || !username) {
+    return new Response("Email,username and password are required", {
       status: 400,
     });
   }
 
-  const existingUser = await db.user.findUnique({
-    where: { email },
+  const existingUser = await db.user.findFirst({
+    where: {
+      OR: [{ email }, { username }],
+    },
   });
 
   if (existingUser) {
-    return new Response("User already exists", {
+    return new Response("User with this credential already exists", {
       status: 400,
     });
   }
@@ -23,13 +25,17 @@ export async function POST(req: Request) {
   const hashedPassword = await bcrypt.hash(password, 10);
 
   try {
+    console.log("rached here");
     const user = await db.user.create({
-      data: { email, password: hashedPassword },
+      data: { email, username, password: hashedPassword },
     });
     return new Response(JSON.stringify(user), {
       status: 201,
     });
   } catch (err) {
-    return new Response("Error creating user", { status: 500 });
+    return new Response(JSON.stringify({ error: String(err) }), {
+      status: 508,
+      headers: { "Content-Type": "application/json" },
+    });
   }
 }

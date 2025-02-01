@@ -16,10 +16,29 @@ datasource db {
 model User {
   id                String             @id @default(uuid())
   email             String             @unique
-  name              String?
+  username          String
   password          String
   OnRampTransaction OnRampTransaction[]
-  Balance           Int @default(0)
+  sentTransactions  P2PTransaction[]   @relation("Sender")
+  receivedTransactions P2PTransaction[] @relation("Receiver")
+  Balance           Int                @default(0)
+}
+
+model P2PTransaction {
+  id          String   @id @default(uuid())
+  sender      User     @relation("Sender", fields: [senderId], references: [id])
+  senderId    String
+  receiver    User     @relation("Receiver", fields: [receiverId], references: [id])
+  receiverId  String
+  amount      Int
+  status      TransactionStatus @default(PENDING) 
+  timestamp   DateTime @default(now())
+}
+
+enum TransactionStatus {
+  SUCCESS
+  FAILED
+  PENDING
 }
 
 model BankUser {
@@ -60,6 +79,8 @@ model OnRampTransaction {
   userId    String
   user      User         @relation(fields: [userId], references: [id])
 }
+
+
 
 enum OnRampStatus {
   Success

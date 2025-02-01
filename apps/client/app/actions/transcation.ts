@@ -95,3 +95,81 @@ const generateSignedPayload = (
 
   return { payload: payloadString, signature };
 };
+
+export async function p2pTransfer(username: string, amount: number) {
+  if (amount <= 0) {
+    throw new Error(
+      "❌ Invalid transfer amount. Amount must be greater than zero."
+    );
+  }
+
+  const session = await getServerSession(authOptions);
+  if (!session) {
+    throw new Error("🚫 Unauthenticated request. Please log in.");
+  }
+
+  const senderId = session.user.id;
+
+  // Fetch sender
+  const sender = await db.user.findUnique({
+    where: { id: senderId },
+  });
+
+  if (!sender) {
+    throw new Error("⚠️ Sender not found. Please try again.");
+  }
+
+  if (sender.Balance < amount) {
+    throw new Error("💰 Insufficient balance. You don’t have enough funds.");
+  }
+
+  // Fetch receiver
+  const receiver = await db.user.findFirst({
+    where: {
+      username: { equals: username, mode: "insensitive" },
+    },
+  });
+
+  if (!receiver) {
+    throw new Error(
+      `❌ Receiver "${username}" not found. Please check the username.`
+    );
+  }
+
+  if (receiver.id === senderId) {
+    throw new Error("⚠️ You cannot send money to yourself.");
+  }
+
+  try {
+    await db.$transaction([
+      db.user.update({
+        where: { id: senderId },
+        data: { Balance: { decrement: amount } },
+      }),
+
+      db.user.update({
+        where: { id: receiver.id },
+        data: { Balance: { increment: amount } },
+      }),
+
+      db.p2PTransaction.create({
+        data: {
+          senderId,
+          receiverId: receiver.id,
+          amount,
+          status: "PENDING",
+        },
+      }),
+    ]);
+
+    return {
+      success: true,
+      message: `✅ ₹${amount} successfully transferred to @${username}!`,
+    };
+  } catch (error: any) {
+    console.error("🔥 P2P Transaction Error:", error);
+    throw new Error(
+      `❌ Transaction failed: ${error.message || "Unknown error occurred."}`
+    );
+  }
+}

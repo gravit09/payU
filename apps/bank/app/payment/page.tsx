@@ -9,7 +9,6 @@ export default function Payment() {
   const router = useRouter();
   const [isValid, setIsValid] = useState<boolean | null>(null);
   const [amount, setAmount] = useState<number | null>(null);
-  const [txnId, setTxnId] = useState<string | null>(null);
   const [payload, setPayload] = useState<string | null>(null);
   const [signature, setSignature] = useState<string | null>(null);
 
@@ -88,51 +87,55 @@ export default function Payment() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="bg-white p-8 rounded-lg shadow-lg max-w-lg w-full">
-        <h1 className="text-3xl font-semibold text-center text-indigo-600 mb-6">
+    <div className="flex min-h-screen items-center justify-center bg-blue-50 py-12 px-4">
+      <div className="w-full max-w-md bg-white shadow-xl rounded-xl p-6 border border-blue-200">
+        {/* Title */}
+        <h2 className="text-2xl font-semibold text-center text-blue-900">
           Payment Verification
-        </h1>
+        </h2>
+        <p className="text-center text-blue-600 mb-6">
+          Securely confirm your transaction
+        </p>
 
+        {/* Verification State */}
         {isValid === null && (
-          <p className="text-center text-gray-600">
+          <p className="text-center text-blue-500">
             Verifying payment request...
           </p>
         )}
-
         {isValid === false && (
-          <div className="text-center text-red-600">
-            <p>Invalid payment request. Please try again.</p>
-          </div>
+          <p className="text-center text-red-600 font-medium">
+            Invalid payment request. Please try again.
+          </p>
         )}
 
+        {/* Payment Details */}
         {isValid === true && amount !== null && (
-          <div className="text-center text-green-600">
-            <p className="text-lg">
-              Payment request of <strong>₹{amount}</strong> is valid.
-            </p>
+          <div className="bg-blue-50 rounded-lg p-4 mb-6 text-center">
+            <p className="text-lg font-medium text-blue-700">Payment Amount</p>
+            <p className="text-3xl font-bold text-blue-900">₹{amount}</p>
           </div>
         )}
-
-        <div className="mt-6 flex justify-center gap-4">
-          <button
-            onClick={() => handlePayment(true)}
-            className="p-2 rounded bg-green-500 text-white"
-            disabled={!isValid}
-          >
-            Accept
-          </button>
-          <button
-            onClick={() => handlePayment(false)}
-            className="p-2 rounded bg-red-500 text-white"
-          >
-            Reject
-          </button>
-        </div>
-
         {isValid === true && amount === null && (
           <p className="text-center text-gray-600 mt-4">Amount not found.</p>
         )}
+
+        {/* Buttons */}
+        <div className="flex flex-col space-y-3">
+          <button
+            className="w-full bg-blue-600 text-white font-semibold py-2 rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            onClick={() => handlePayment(true)}
+            disabled={!isValid}
+          >
+            ✅ Accept
+          </button>
+          <button
+            className="w-full bg-gray-300 text-gray-700 font-semibold py-2 rounded-lg hover:bg-gray-400 focus:ring-4 focus:ring-gray-300 transition duration-200"
+            onClick={() => handlePayment(false)}
+          >
+            ❌ Reject
+          </button>
+        </div>
       </div>
     </div>
   );

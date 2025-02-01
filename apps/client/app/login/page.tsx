@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 export default function UserAuth() {
   const router = useRouter();
   const [email, setEmail] = useState("");
+  const [username, setUserName] = useState("");
   const [password, setPassword] = useState("");
   const [isLogin, setIsLogin] = useState(true);
   const [loading, setLoading] = useState(false);
@@ -45,7 +46,7 @@ export default function UserAuth() {
         const res = await fetch("/login/signup", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ email, password }),
+          body: JSON.stringify({ email, username, password }),
         });
 
         if (!res.ok) {
@@ -98,6 +99,19 @@ export default function UserAuth() {
                   required
                 />
               </div>
+              {!isLogin && (
+                <div className="w-full mt-4">
+                  <input
+                    className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border rounded-lg dark:border-gray-600 dark:placeholder-gray-400 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-opacity-40 focus:outline-none focus:ring focus:ring-blue-300"
+                    type="username"
+                    value={username}
+                    onChange={(e) => setUserName(e.target.value)}
+                    placeholder="username"
+                    aria-label="username"
+                    required
+                  />
+                </div>
+              )}
               <div className="w-full mt-4">
                 <input
                   className="block w-full px-4 py-2 mt-2 text-gray-700 bg-white border rounded-lg dark:border-gray-600 dark:placeholder-gray-400 focus:border-blue-400 dark:focus:border-blue-300 focus:ring-opacity-40 focus:outline-none focus:ring focus:ring-blue-300"
