@@ -31,7 +31,6 @@ export default function UserAuth() {
 
     try {
       if (isLogin) {
-        // Login logic
         const res = await signIn("credentials", {
           redirect: false, // Prevent automatic redirects
           email,
@@ -42,8 +41,13 @@ export default function UserAuth() {
         if (res?.error) {
           throw new Error(res.error);
         }
-
-        // Redirect to the dashboard on successful login
+        const urlParams = new URLSearchParams(window.location.search);
+        const returnUrl = urlParams.get("returnUrl");
+        //if there is a payment request redirect to payment page after login
+        if (returnUrl) {
+          router.push(returnUrl);
+          return;
+        }
         window.location.href = "/dashboard";
       } else {
         // Signup logic

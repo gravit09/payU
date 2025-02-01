@@ -18,7 +18,8 @@ export default function Payment() {
       try {
         const session = await getSession();
         if (session?.user?.app !== "bank") {
-          router.push("/login");
+          const returnUrl = encodeURIComponent(window.location.href);
+          router.push(`/login?returnUrl=${returnUrl}`);
           return;
         }
         const urlParams = new URLSearchParams(window.location.search);
