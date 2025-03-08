@@ -2,7 +2,6 @@
 import db from "@repo/db/client";
 import { getServerSession } from "next-auth";
 import crypto from "crypto";
-import { v4 as uuidv4 } from "uuid";
 import { authOptions } from "../api/auth/[...nextauth]/authOptions";
 
 interface Payload {

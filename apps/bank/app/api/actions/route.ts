@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import crypto from "crypto";
 import db from "@repo/db/client";
 import { getServerSession } from "next-auth";
-import { authOptions } from "../auth/[...nextauth]/route";
+import { authOptions } from "../auth/[...nextauth]/authOptions";
 
 const SECRET_KEY = process.env.SECRET_KEY || "defaultSecretKey";
 const WEBHOOK_URL =
