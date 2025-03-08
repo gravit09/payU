@@ -5,13 +5,16 @@
     "build": {
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": [".next/**", "!.next/cache/**"]
+      "outputs": [".next/**", "!.next/cache/**"],
+      "env": ["NEXTAUTH_SECRET", "SECRET_KEY", "DATABASE_URL"]
     },
     "lint": {
-      "dependsOn": ["^lint"]
+      "dependsOn": ["^lint"],
+      "env": ["NEXTAUTH_SECRET", "SECRET_KEY", "DATABASE_URL"]
     },
     "check-types": {
-      "dependsOn": ["^check-types"]
+      "dependsOn": ["^check-types"],
+      "env": ["NEXTAUTH_SECRET", "SECRET_KEY", "DATABASE_URL"]
     },
     "dev": {
       "cache": false,

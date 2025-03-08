@@ -142,6 +142,7 @@ export async function p2pTransfer(username: string, amount: number) {
 
   try {
     await db.$transaction([
+      db.$queryRaw`SELECT * FROM "User" WHERE "id" = ${senderId} FOR UPDATE`, // this line of code is used to lock the balance
       db.user.update({
         where: { id: senderId },
         data: { Balance: { decrement: amount } },
@@ -161,7 +162,6 @@ export async function p2pTransfer(username: string, amount: number) {
         },
       }),
     ]);
-
     return {
       success: true,
       message: `✅ ₹${amount} successfully transferred to @${username}!`,
