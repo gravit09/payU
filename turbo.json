@@ -6,7 +6,14 @@
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": [".next/**", "!.next/cache/**"],
-      "env": ["NEXTAUTH_SECRET", "SECRET_KEY", "DATABASE_URL"]
+      "env": [
+        "NEXTAUTH_SECRET",
+        "SECRET_KEY",
+        "DATABASE_URL",
+        "WEBHOOK_URL",
+        "WEBHOOK_SECRET",
+        "NODE_ENV"
+      ]
     },
     "lint": {
       "dependsOn": ["^lint"],
