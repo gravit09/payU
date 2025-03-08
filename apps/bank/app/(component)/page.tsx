@@ -3,7 +3,7 @@
 import React from "react";
 import { useRouter } from "next/navigation";
 
-interface InteractiveSectionProps {
+export interface InteractiveSectionProps {
   yojanas: string[];
   addMoney: () => void;
 }
@@ -13,6 +13,7 @@ const InteractiveSection: React.FC<InteractiveSectionProps> = ({
   addMoney,
 }) => {
   const router = useRouter();
+
   const handleButtonClick = () => {
     addMoney();
     const randomQuote = yojanas[Math.floor(Math.random() * yojanas.length)];

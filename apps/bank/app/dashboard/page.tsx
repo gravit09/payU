@@ -62,7 +62,7 @@ export default async function Dashboard() {
             <h2 className="text-xl font-semibold">Transaction History</h2>
             <ul className="mt-4 space-y-2">
               {user.transactions.length > 0 ? (
-                user.transactions.map((txn) => (
+                user.transactions.map((txn: any) => (
                   <li
                     key={txn.id}
                     className="border-b border-gray-300 dark:border-gray-700 pb-2"
