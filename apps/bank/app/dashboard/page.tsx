@@ -1,7 +1,7 @@
 import db from "@repo/db/client";
 import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "../api/auth/[...nextauth]/route";
+import { authOptions } from "../api/auth/[...nextauth]/authOptions";
 import { addMoney } from "../api/actions/route";
 import InteractiveSection from "../(component)/InteractiveSection";
 
