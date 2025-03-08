@@ -6,6 +6,10 @@
   "exports": {
     "./client": "./index.ts"
   },
+  "scripts": {
+    "prisma:generate": "npx prisma generate",
+    "build": "next build"
+  },
   "dependencies": {
     "@prisma/client": "^6.1.0"
   }

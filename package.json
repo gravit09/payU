@@ -3,8 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "prisma:generate": "prisma generate",
-    "build": "prisma generate && turbo build",
+    "build": "turbo build",
     "dev": "turbo dev",
     "lint": "turbo lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
