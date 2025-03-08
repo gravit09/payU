@@ -12,7 +12,7 @@ export default async function Dashboard() {
   return (
     <div>
       <h1>This is a protected route</h1>
-      <p>Welcome, {session.user?.name || "Guest"}!</p>
+      <p>Welcome, {session.user?.username || "Guest"}!</p>
       <p>{JSON.stringify(session)}</p>
     </div>
   );
