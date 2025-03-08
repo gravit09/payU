@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../api/auth/[...nextauth]/route";
 import { addMoney } from "../api/actions/route";
-import InteractiveSection from "../(component)/page";
+import InteractiveSection from "../(component)/InteractiveSection";
 
 export default async function Dashboard() {
   const yojanas: string[] = [
